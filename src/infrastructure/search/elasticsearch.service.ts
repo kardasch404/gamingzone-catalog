@@ -22,8 +22,8 @@ export class ElasticsearchService implements OnModuleInit {
       await this.client.indices.create({
         index: ELASTICSEARCH_CONFIG.INDEX,
         body: {
-          settings: ELASTICSEARCH_CONFIG.SETTINGS,
-          mappings: ELASTICSEARCH_CONFIG.MAPPINGS,
+          settings: ELASTICSEARCH_CONFIG.SETTINGS as any,
+          mappings: ELASTICSEARCH_CONFIG.MAPPINGS as any,
         },
       });
     }
