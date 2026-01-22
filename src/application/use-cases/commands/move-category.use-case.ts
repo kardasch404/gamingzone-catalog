@@ -47,10 +47,16 @@ export class MoveCategoryUseCase {
 
   private async wouldCreateCircular(categoryId: string, newParentId: string): Promise<boolean> {
     let currentId: string | null = newParentId;
+    const visited = new Set<string>();
+    
     while (currentId) {
       if (currentId === categoryId) {
         return true;
       }
+      if (visited.has(currentId)) {
+        return false;
+      }
+      visited.add(currentId);
       const parent = await this.repository.findById(currentId);
       currentId = parent?.parentId || null;
     }
