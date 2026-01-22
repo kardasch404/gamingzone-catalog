@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
-import { GetProductQuery } from '../../../application/use-cases/queries/get-product.query';
-import { SearchProductsQuery } from '../../../application/use-cases/queries/search-products.query';
+import { GetProductQuery } from '../../application/use-cases/queries/get-product.query';
+import { SearchProductsQuery } from '../../application/use-cases/queries/search-products.query';
 
 interface GetProductRequest {
   productId: string;
@@ -27,7 +27,7 @@ interface GetProductsByIdsRequest {
 export class CatalogGrpcController {
   constructor(
     private getProduct: GetProductQuery,
-    private searchProducts: SearchProductsQuery,
+    private searchProductsQuery: SearchProductsQuery,
   ) {}
 
   @GrpcMethod('CatalogService', 'GetProduct')
@@ -70,7 +70,7 @@ export class CatalogGrpcController {
 
   @GrpcMethod('CatalogService', 'SearchProducts')
   async searchProducts(data: SearchProductsRequest) {
-    const result = await this.searchProducts.execute({
+    const result = await this.searchProductsQuery.execute({
       query: data.query,
       categoryId: data.categoryId,
       platformId: data.platformId,
