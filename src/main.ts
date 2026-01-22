@@ -13,8 +13,12 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Gaming Zone Catalog API')
-    .setDescription('Catalog service for gaming products')
+    .setDescription('Catalog service for gaming products with full-text search, filtering, and pagination')
     .setVersion('1.0')
+    .addTag('products', 'Product management endpoints')
+    .addTag('categories', 'Category management endpoints')
+    .addTag('platforms', 'Platform endpoints')
+    .addTag('health', 'Health check endpoints')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
