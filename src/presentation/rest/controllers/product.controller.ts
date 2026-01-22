@@ -29,6 +29,8 @@ export class ProductController {
   @ApiQuery({ name: 'platformId', required: false })
   @ApiQuery({ name: 'minPrice', required: false })
   @ApiQuery({ name: 'maxPrice', required: false })
+  @ApiQuery({ name: 'sortBy', required: false, enum: ['price', 'rating', 'date'] })
+  @ApiQuery({ name: 'order', required: false, enum: ['asc', 'desc'] })
   async list(@Query() query: any) {
     return this.searchProducts.execute({
       query: query.search || '',
