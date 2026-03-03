@@ -1,0 +1,133 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id          String     @id @default(uuid())
+  name        String     @unique
+  slug        String     @unique
+  description String?
+  image       String?
+  parentId    String?
+  parent      Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryHierarchy")
+  products    Product[]
+  isActive    Boolean    @default(true)
+  sortOrder   Int        @default(0)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([slug])
+  @@index([parentId])
+  @@map("categories")
+}
+
+model Platform {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  slug      String    @unique
+  image     String?
+  isActive  Boolean   @default(true)
+  sortOrder Int       @default(0)
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("platforms")
+}
+
+model Product {
+  id               String                 @id @default(uuid())
+  sku              String                 @unique
+  name             String
+  slug             String                 @unique
+  shortDescription String?
+  fullDescription  String                 @db.Text
+  basePrice        Decimal                @db.Decimal(10, 2)
+  comparePrice     Decimal?               @db.Decimal(10, 2)
+  currency         String                 @default("MAD")
+  categoryId       String
+  category         Category               @relation(fields: [categoryId], references: [id])
+  platformId       String?
+  platform         Platform?              @relation(fields: [platformId], references: [id])
+  productType      ProductType
+  condition        Condition
+  status           ProductStatus          @default(DRAFT)
+  averageRating    Decimal?               @db.Decimal(3, 2)
+  reviewCount      Int                    @default(0)
+  viewCount        Int                    @default(0)
+  purchaseCount    Int                    @default(0)
+  publishedAt      DateTime?
+  isDeleted        Boolean                @default(false)
+  deletedAt        DateTime?
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
+  images           ProductImage[]
+  specifications   ProductSpecification[]
+
+  @@index([slug])
+  @@index([sku])
+  @@index([categoryId])
+  @@index([platformId])
+  @@index([status])
+  @@index([isDeleted])
+  @@index([publishedAt])
+  @@map("products")
+}
+
+enum ProductType {
+  GAME
+  CONSOLE
+  ACCESSORY
+  DIGITAL_CODE
+  MERCHANDISE
+}
+
+enum Condition {
+  NEW
+  USED
+  REFURBISHED
+  DIGITAL
+}
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  INACTIVE
+  OUT_OF_STOCK
+  ARCHIVED
+}
+
+model ProductImage {
+  id        String   @id @default(uuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  altText   String?
+  isPrimary Boolean  @default(false)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([productId])
+  @@map("product_images")
+}
+
+model ProductSpecification {
+  id        String   @id @default(uuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  key       String
+  value     String
+  group     String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@unique([productId, key])
+  @@index([productId])
+  @@map("product_specifications")
+}

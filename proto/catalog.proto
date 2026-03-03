@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package catalog;
+
+service CatalogService {
+  rpc GetProduct(GetProductRequest) returns (ProductResponse);
+  rpc GetProductBySku(GetProductBySkuRequest) returns (ProductResponse);
+  rpc SearchProducts(SearchProductsRequest) returns (SearchProductsResponse);
+  rpc GetProductsByIds(GetProductsByIdsRequest) returns (GetProductsByIdsResponse);
+  rpc CheckProductAvailability(CheckAvailabilityRequest) returns (AvailabilityResponse);
+  rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse);
+}
+
+message GetProductRequest {
+  string productId = 1;
+}
+
+message GetProductBySkuRequest {
+  string sku = 1;
+}
+
+message SearchProductsRequest {
+  string query = 1;
+  int32 page = 2;
+  int32 limit = 3;
+  string categoryId = 4;
+  string platformId = 5;
+}
+
+message GetProductsByIdsRequest {
+  repeated string productIds = 1;
+}
+
+message CheckAvailabilityRequest {
+  string productId = 1;
+}
+
+message ProductResponse {
+  string id = 1;
+  string sku = 2;
+  string name = 3;
+  string slug = 4;
+  double basePrice = 5;
+  string categoryId = 6;
+  string status = 7;
+  string productType = 8;
+  string condition = 9;
+}
+
+message SearchProductsResponse {
+  repeated ProductResponse products = 1;
+  int32 total = 2;
+}
+
+message GetProductsByIdsResponse {
+  repeated ProductResponse products = 1;
+}
+
+message AvailabilityResponse {
+  bool available = 1;
+  int32 quantity = 2;
+}
+
+message HealthCheckRequest {}
+
+message HealthCheckResponse {
+  string status = 1;
+  string service = 2;
+}
